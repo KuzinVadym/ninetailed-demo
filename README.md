@@ -14,8 +14,11 @@ The [Hello World Tutorial](https://docs.temporal.io/typescript/hello-world/) wal
 1. `yarn start.watch` to start the Worker.
 1. In another shell, `yarn start.server` to run the Workflow Client.
    I prepare 2 end points for use cases
+   
       GET http://localhost:<SERVER_PORT>/api/case1 (Content type collection / Create a content type)
+      
       GET http://localhost:<SERVER_PORT>/api/case2 (Entries collection / Create an entry)
+      
    I know this is super fancy naming ))) sorry for this. Second useCase return fith status false in purpose
    
 
