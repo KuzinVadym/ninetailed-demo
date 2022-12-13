@@ -12,7 +12,8 @@ The [Hello World Tutorial](https://docs.temporal.io/typescript/hello-world/) wal
   CONTENT_MANAGEMENT_API_KEY=*********
 1. `yarn` to install dependencies.
 1. `yarn start.watch` to start the Worker.
-1. In another shell, `yarn start.server` to run the Workflow Client.
+1. In another shell, `yarn start.server` to run the Simple Http Server
+   
    I prepare 2 end points for use cases
    
       GET http://localhost:<SERVER_PORT>/api/case1 (Content type collection / Create a content type)
