@@ -20,10 +20,3 @@ The [Hello World Tutorial](https://docs.temporal.io/typescript/hello-world/) wal
       GET http://localhost:<SERVER_PORT>/api/case2 (Entries collection / Create an entry)
       
    I know this is super fancy naming ))) sorry for this. Second useCase return fith status false in purpose
-   
-
-The Workflow should return:
-
-```bash
-Hello, Temporal!
-```
