@@ -25,6 +25,14 @@ export async function createContentType(payload: {
   return contentfulClient.createContentType(payload);
 }
 
+export async function createContentTypeWithId(payload: {
+  spaceId: string;
+  environmentId: string;
+  contentTypeId: string;
+}): Promise<ContentType> {
+  return contentfulClient.createContentTypeWithId(payload);
+}
+
 export async function activateContentType(payload: {
   spaceId: string;
   environmentId: string
@@ -35,11 +43,21 @@ export async function activateContentType(payload: {
 
 export async function createEntry(payload: {
   spaceId: string;
-  environmentId: string
-  contentTypeId: string
+  environmentId: string;
+  contentTypeId: string;
 }): Promise<Entry | null> {
   return contentfulClient.createEntry(payload);
 }
+
+export async function createEntryWithId(payload: {
+  spaceId: string;
+  environmentId: string;
+  contentTypeId: string;
+  entityId: string;
+}): Promise<Entry | null> {
+  return contentfulClient.createEntryWithId(payload);
+}
+
 export async function getContentTypes(): Promise<Collection<ContentType, ContentTypeProps>> {
   return contentfulClient.getContentTypes();
 }
@@ -47,6 +65,7 @@ export async function getContentTypes(): Promise<Collection<ContentType, Content
 export async function deleteContentType(): Promise<boolean> {
   return contentfulClient.deleteContentType();
 }
+
 export async function getSpacesAndEnvironment(): Promise<{
   space: Space;
   env: Environment;
@@ -66,34 +85,5 @@ export async function getContentTypeById(payload: {
   environmentId: string;
   contentTypeId: string;
 }): Promise<ContentType | null> {
-
   return contentfulClient.getContentTypeById(payload);
-}
-
-export async function createContentTypeAndEntry(payload: {
-  spaceId: string;
-  environmentId: string;
-  contentTypeId: string;
-  entityId: string;
-}): Promise<Entry | null> {
-  const {spaceId, environmentId, contentTypeId} = payload;
-  //getContentType
-  const contentType = await contentfulClient.getContentTypeById({spaceId, environmentId, contentTypeId})
-
-  if(!contentType){
-    //create contentType
-    const contentType = await contentfulClient.createContentTypeWithId({spaceId, environmentId, contentTypeId});
-
-    if(contentType && !contentType.sys.publishedVersion){
-      //activate contentType
-      await contentfulClient.activateContentType({spaceId, environmentId, contentTypeId});
-    }
-  } else {
-    if(!contentType.sys.publishedVersion){
-      //activate contentType
-      await contentfulClient.activateContentType({spaceId, environmentId, contentTypeId});
-    }
-  }
-
-  return contentfulClient.createEntryWithId(payload);
 }

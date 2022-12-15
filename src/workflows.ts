@@ -12,12 +12,14 @@ const {
   getEnvironments,
   createContentType,
   getContentTypes,
+  getContentTypeById,
   deleteContentType,
   getSpacesAndEnvironment,
   createEntry,
+  createEntryWithId,
   getContentType,
   activateContentType,
-  createContentTypeAndEntry
+  createContentTypeWithId
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
   retry: {
@@ -45,7 +47,7 @@ export async function getSpacesAndEnvironmentWorkflow(): Promise<IResponse> {
 
 export async function getContentTypeWorkflow(payload: {
   spaceId: string;
-  environmentId: string
+  environmentId: string;
 }): Promise<IResponse> {
   try {
     const contentType = await getContentType(payload);
@@ -64,6 +66,24 @@ export async function getContentTypeWorkflow(payload: {
 export async function getContentTypesWorkflow(): Promise<IResponse> {
   try {
     const contentTypes = await getContentTypes();
+    return {
+      status: true,
+      response: contentTypes
+    }
+  } catch (error: any){
+    return {
+      status: false,
+      error: error.message
+    }
+  }
+}
+export async function getContentTypeByIdWorkflow(payload: {
+  spaceId: string;
+  environmentId: string;
+  contentTypeId: string;
+}): Promise<IResponse> {
+  try {
+    const contentTypes = await getContentTypeById(payload);
     return {
       status: true,
       response: contentTypes
@@ -139,10 +159,31 @@ export async function createContentTypeAndEntryWorkflow(payload: {
   entityId: string
 }): Promise<IResponse> {
   try {
-    const entry = await createContentTypeAndEntry(payload);
+
+    const {spaceId, environmentId, contentTypeId} = payload;
+    //getContentType
+    const contentType = await getContentTypeById({spaceId, environmentId, contentTypeId})
+
+    if(!contentType){
+      //create contentType
+      const contentType = await createContentTypeWithId({spaceId, environmentId, contentTypeId});
+
+      if(contentType && !contentType.sys.publishedVersion){
+        //activate contentType
+        await activateContentType({spaceId, environmentId, contentTypeId});
+      }
+    } else {
+      if(!contentType.sys.publishedVersion){
+        //activate contentType
+        await activateContentType({spaceId, environmentId, contentTypeId});
+      }
+    }
+    const newEntry = await createEntryWithId(payload);
+    console.log('newEntry');
+    console.log(newEntry);
     return {
       status: true,
-      response: entry
+      response: newEntry
     }
   } catch (error: any){
     return {
