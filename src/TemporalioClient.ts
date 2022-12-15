@@ -9,7 +9,9 @@ import {
     deleteContentTypeWorkflow,
     getSpacesAndEnvironmentWorkflow,
     createEntryWorkflow,
-    getContentTypeWorkflow, activateContentTypeWorkflow
+    getContentTypeWorkflow,
+    activateContentTypeWorkflow,
+    createContentTypeAndEntryWorkflow
 } from './workflows';
 
 
@@ -81,8 +83,8 @@ class TemporalioClient {
 
     executeGetContentTypeWorkflow = async (
         args: [{
-            spaceId: string,
-            environmentId: string
+            spaceId: string;
+            environmentId: string;
         }],
     ) => {
         const handle: WorkflowResultType<any> = await this.client?.start(getContentTypeWorkflow, {
@@ -99,8 +101,8 @@ class TemporalioClient {
 
     executeCreateContentTypeWorkflow = async (
         args: [{
-            spaceId: string,
-            environmentId: string
+            spaceId: string;
+            environmentId: string;
         }],
     ) => {
         const handle: WorkflowResultType<any> = await this.client?.start(createContentTypeWorkflow, {
@@ -117,9 +119,9 @@ class TemporalioClient {
 
     executeActivateContentTypeWorkflow = async (
         args: [{
-            spaceId: string,
-            environmentId: string
-            contentTypeId: string
+            spaceId: string;
+            environmentId: string;
+            contentTypeId: string;
         }],
     ) => {
         const handle: WorkflowResultType<any> = await this.client?.start(activateContentTypeWorkflow, {
@@ -136,12 +138,32 @@ class TemporalioClient {
 
     executeCreateEntryWorkflow = async (
         args: [{
-            spaceId: string,
-            environmentId: string
-            contentTypeId: string
+            spaceId: string;
+            environmentId: string;
+            contentTypeId: string;
         }],
     ) => {
         const handle: WorkflowResultType<any> = await this.client?.start(createEntryWorkflow, {
+            args,
+            taskQueue: 'contentful-workflows',
+            // in practice, use a meaningful business id, eg customerId or transactionId
+            workflowId: 'workflow-' + nanoid(),
+        });
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return await handle.result();
+    };
+
+    executeCreateContentTypeAndEntry = async (
+        args: [{
+            spaceId: string;
+            environmentId: string;
+            contentTypeId: string;
+            entityId: string;
+        }],
+    ) => {
+        const handle: WorkflowResultType<any> = await this.client?.start(createContentTypeAndEntryWorkflow, {
             args,
             taskQueue: 'contentful-workflows',
             // in practice, use a meaningful business id, eg customerId or transactionId

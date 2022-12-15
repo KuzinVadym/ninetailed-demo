@@ -60,3 +60,40 @@ export async function getContentType(payload: {
 }): Promise<ContentType> {
   return contentfulClient.getContentType(payload);
 }
+
+export async function getContentTypeById(payload: {
+  spaceId: string;
+  environmentId: string;
+  contentTypeId: string;
+}): Promise<ContentType | null> {
+
+  return contentfulClient.getContentTypeById(payload);
+}
+
+export async function createContentTypeAndEntry(payload: {
+  spaceId: string;
+  environmentId: string;
+  contentTypeId: string;
+  entityId: string;
+}): Promise<Entry | null> {
+  const {spaceId, environmentId, contentTypeId} = payload;
+  //getContentType
+  const contentType = await contentfulClient.getContentTypeById({spaceId, environmentId, contentTypeId})
+
+  if(!contentType){
+    //create contentType
+    const contentType = await contentfulClient.createContentTypeWithId({spaceId, environmentId, contentTypeId});
+
+    if(contentType && !contentType.sys.publishedVersion){
+      //activate contentType
+      await contentfulClient.activateContentType({spaceId, environmentId, contentTypeId});
+    }
+  } else {
+    if(!contentType.sys.publishedVersion){
+      //activate contentType
+      await contentfulClient.activateContentType({spaceId, environmentId, contentTypeId});
+    }
+  }
+
+  return contentfulClient.createEntryWithId(payload);
+}

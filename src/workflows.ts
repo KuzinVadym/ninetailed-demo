@@ -1,6 +1,5 @@
 import { proxyActivities } from '@temporalio/workflow';
 import type * as activities from './activities';
-import {NonRetryableError} from './utils/NonRetryableError';
 
 export interface IResponse {
   status: boolean;
@@ -17,7 +16,8 @@ const {
   getSpacesAndEnvironment,
   createEntry,
   getContentType,
-  activateContentType
+  activateContentType,
+  createContentTypeAndEntry
 } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
   retry: {
@@ -120,6 +120,26 @@ export async function createEntryWorkflow(payload: {
 }): Promise<IResponse> {
   try {
     const entry = await createEntry(payload);
+    return {
+      status: true,
+      response: entry
+    }
+  } catch (error: any){
+    return {
+      status: false,
+      error: error.message
+    }
+  }
+}
+
+export async function createContentTypeAndEntryWorkflow(payload: {
+  spaceId: string;
+  environmentId: string
+  contentTypeId: string
+  entityId: string
+}): Promise<IResponse> {
+  try {
+    const entry = await createContentTypeAndEntry(payload);
     return {
       status: true,
       response: entry

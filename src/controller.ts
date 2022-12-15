@@ -46,12 +46,24 @@ class Controller {
                 [{
                     spaceId: space.sys.id,
                     environmentId: env.sys.id,
-                    contentTypeId: '367yLKafE3Iz4TvFJSfAwi'
+                    contentTypeId: contentType.sys.id //'367yLKafE3Iz4TvFJSfAwi'
                 }],
             )
         }
 
         return spacesAndEnvironmentResponse
+    }
+
+    // all together in one bottle
+    async runTestCase3() {
+        return await temporalioClient.executeCreateContentTypeAndEntry(
+            [{
+                spaceId: 's49pa11mvzi7',
+                environmentId: 'master',
+                contentTypeId: '369yLKafE3Iz4TvFJSfAwi',
+                entityId: 'pipapu'
+            }],
+        )
     }
 
 }
